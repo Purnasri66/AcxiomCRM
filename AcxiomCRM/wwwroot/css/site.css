@@ -1,0 +1,118 @@
+/* AcxiomCRM Modern Enterprise Styles */
+:root {
+    --sidebar-width: 250px;
+    --transition-speed: 0.2s;
+}
+
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    transition: margin-left var(--transition-speed) ease-in-out;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        margin-left: calc(-1 * var(--sidebar-width));
+        position: fixed;
+        z-index: 1040;
+        height: 100vh;
+    }
+    .sidebar.show {
+        margin-left: 0;
+    }
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #0d6efd, #0dcaf0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.smaller {
+    font-size: 0.75rem;
+}
+
+/* Kanban Board Styles */
+.kanban-board {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+    min-height: 70vh;
+}
+
+.kanban-column {
+    flex: 0 0 280px;
+    background-color: var(--bs-tertiary-bg);
+    border-radius: 0.75rem;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.kanban-cards {
+    flex-grow: 1;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.kanban-card {
+    background-color: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    cursor: grab;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.kanban-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.kanban-card.dragging {
+    opacity: 0.5;
+}
+
+/* Timeline Styles for Customer 360 */
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.75rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--bs-border-color);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-icon {
+    position: absolute;
+    left: -2rem;
+    top: 0;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bs-body-bg);
+    border: 2px solid var(--bs-primary);
+    font-size: 0.75rem;
+}

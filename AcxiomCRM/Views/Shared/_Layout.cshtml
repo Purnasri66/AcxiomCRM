@@ -1,0 +1,273 @@
+@using System.Security.Claims
+@inject AcxiomCRM.Services.INotificationService NotificationService
+@{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+    var userRole = User.FindFirstValue(ClaimTypes.Role) ?? "SalesExecutive";
+    var userName = User.Identity?.Name ?? "User";
+    var notifications = User.Identity?.IsAuthenticated == true
+        ? await NotificationService.GetNotificationsAsync(userId, userRole)
+        : new AcxiomCRM.Services.NotificationData();
+}
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AcxiomCRM</title>
+    <!-- Anti-forgery token for AJAX calls -->
+    @Html.AntiForgeryToken()
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="bg-body-tertiary">
+    <div class="d-flex min-vh-100">
+        <!-- Sidebar -->
+        <aside class="sidebar bg-body border-end d-flex flex-column" id="sidebar">
+            <div class="sidebar-header p-3 border-bottom d-flex align-items-center justify-content-between">
+                <a asp-controller="Dashboard" asp-action="Index" class="d-flex align-items-center text-decoration-none text-body">
+                    <i class="bi bi-diagram-3-fill text-primary fs-4 me-2"></i>
+                    <span class="fs-5 fw-bold tracking-tight">AcxiomCRM</span>
+                </a>
+            </div>
+
+            <div class="sidebar-body flex-grow-1 p-2 overflow-y-auto">
+                <ul class="nav nav-pills flex-column gap-1">
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "text-body")" asp-controller="Dashboard" asp-action="Index">
+                            <i class="bi bi-speedometer2 me-2"></i> Dashboard
+                        </a>
+                    </li>
+
+                    <li class="nav-header small text-uppercase text-muted fw-bold px-3 pt-3 pb-1">CRM Core</li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Customer" ? "active" : "text-body")" asp-controller="Customer" asp-action="Index">
+                            <i class="bi bi-people me-2"></i> Customers
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Lead" ? "active" : "text-body")" asp-controller="Lead" asp-action="Index">
+                            <i class="bi bi-funnel me-2"></i> Leads
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Opportunity" && ViewContext.RouteData.Values["action"]?.ToString() != "Kanban" ? "active" : "text-body")" asp-controller="Opportunity" asp-action="Index">
+                            <i class="bi bi-briefcase me-2"></i> Opportunities
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Opportunity" && ViewContext.RouteData.Values["action"]?.ToString() == "Kanban" ? "active" : "text-body")" asp-controller="Opportunity" asp-action="Kanban">
+                            <i class="bi bi-kanban me-2"></i> Kanban Board
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "FollowUps" ? "active" : "text-body")" asp-controller="FollowUps" asp-action="Index">
+                            <i class="bi bi-calendar-check me-2"></i> Follow-Ups
+                            @if (notifications.TotalCount > 0)
+                            {
+                                <span class="badge bg-danger rounded-pill ms-auto">@notifications.TotalCount</span>
+                            }
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Activities" ? "active" : "text-body")" asp-controller="Activities" asp-action="Index">
+                            <i class="bi bi-clock-history me-2"></i> Activities
+                        </a>
+                    </li>
+
+                    <li class="nav-header small text-uppercase text-muted fw-bold px-3 pt-3 pb-1">Analytics</li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reports" ? "active" : "text-body")" asp-controller="Reports" asp-action="Index">
+                            <i class="bi bi-file-earmark-bar-graph me-2"></i> Reports
+                        </a>
+                    </li>
+
+                    @if (userRole == "Admin" || userRole == "Manager")
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Audit" ? "active" : "text-body")" asp-controller="Audit" asp-action="Index">
+                                <i class="bi bi-shield-check me-2"></i> Audit Logs
+                            </a>
+                        </li>
+                    }
+
+                    @if (userRole == "Admin")
+                    {
+                        <li class="nav-header small text-uppercase text-muted fw-bold px-3 pt-3 pb-1">Administration</li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Users" && ViewContext.RouteData.Values["action"]?.ToString() != "Permissions" ? "active" : "text-body")" asp-controller="Users" asp-action="Index">
+                                <i class="bi bi-person-gear me-2"></i> User Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Users" && ViewContext.RouteData.Values["action"]?.ToString() == "Permissions" ? "active" : "text-body")" asp-controller="Users" asp-action="Permissions">
+                                <i class="bi bi-key me-2"></i> Permissions Matrix
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <div class="sidebar-footer p-3 border-top">
+                <div class="d-flex align-items-center">
+                    <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 36px; height: 36px;">
+                        @(userName.Length > 0 ? userName.Substring(0, 1).ToUpper() : "U")
+                    </div>
+                    <div class="flex-grow-1 overflow-hidden">
+                        <div class="small fw-semibold text-truncate">@userName</div>
+                        <div class="text-muted smaller text-truncate">@userRole</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-grow-1 d-flex flex-column min-vw-0">
+            <!-- Top Navbar -->
+            <header class="navbar navbar-expand bg-body border-bottom px-3 py-2 sticky-top">
+                <button class="btn btn-sm btn-outline-secondary d-md-none me-2" type="button" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+
+                <!-- Global Search Pill (Ctrl+K) -->
+                <div class="me-auto" style="max-width: 400px; width: 100%;">
+                    <button type="button" class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center justify-content-between rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#searchModal">
+                        <span><i class="bi bi-search me-2 text-muted"></i>Quick search...</span>
+                        <kbd class="bg-body-secondary text-body-secondary px-2 py-0 border rounded small">Ctrl + K</kbd>
+                    </button>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Dark/Light Theme Toggle -->
+                    <button class="btn btn-sm btn-outline-secondary rounded-circle" id="themeToggle" title="Toggle dark/light theme" type="button" style="width: 36px; height: 36px;">
+                        <i class="bi bi-sun-fill" id="themeIcon"></i>
+                    </button>
+
+                    <!-- Notifications Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary rounded-circle position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 36px; height: 36px;">
+                            <i class="bi bi-bell-fill"></i>
+                            @if (notifications.TotalCount > 0)
+                            {
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    @notifications.TotalCount
+                                    <span class="visually-hidden">unread notifications</span>
+                                </span>
+                            }
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2" style="width: 320px; max-height: 400px; overflow-y: auto;">
+                            <li class="dropdown-header d-flex justify-content-between align-items-center px-2 py-1">
+                                <span class="fw-bold">Notifications</span>
+                                <span class="badge bg-secondary-subtle text-secondary-emphasis">@notifications.TotalCount</span>
+                            </li>
+                            <li><hr class="dropdown-divider my-1"></li>
+                            @if (notifications.Items.Any())
+                            {
+                                @foreach (var item in notifications.Items)
+                                {
+                                    <li>
+                                        <a class="dropdown-item rounded p-2 d-flex align-items-start gap-2" href="@item.Url">
+                                            <i class="bi @(item.Type == "overdue" ? "bi-exclamation-circle-fill text-danger" : "bi-clock-fill text-primary") mt-1"></i>
+                                            <div class="small">
+                                                <div class="fw-semibold">@item.Title</div>
+                                                <div class="text-muted smaller">@item.Message</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                <li class="text-center py-3 text-muted small">No pending follow-ups</li>
+                            }
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li>
+                                <a class="dropdown-item text-center small text-primary fw-semibold" asp-controller="FollowUps" asp-action="Index">
+                                    View all follow-ups
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- User Menu Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1 rounded-pill px-2 py-1" type="button" data-bs-toggle="dropdown">
+                            <span class="small fw-semibold">@userName</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2">
+                            <li class="dropdown-header small">Signed in as <strong>@userRole</strong></li>
+                            <li><hr class="dropdown-divider my-1"></li>
+                            <li>
+                                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                    <button type="submit" class="dropdown-item text-danger rounded">
+                                        <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Alerts Container -->
+            <div class="container-fluid px-4 pt-3">
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+            </div>
+
+            <!-- Page Body -->
+            <main class="flex-grow-1 container-fluid px-4 py-3">
+                @RenderBody()
+            </main>
+
+            <!-- Footer -->
+            <footer class="bg-body border-top py-2 px-4 text-center small text-muted">
+                &copy; @DateTime.UtcNow.Year AcxiomCRM - Enterprise Sales & Relationship Platform.
+            </footer>
+        </div>
+    </div>
+
+    <!-- Quick Search Modal (Ctrl+K) -->
+    <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-header border-bottom p-3">
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-search fs-5"></i></span>
+                        <input type="text" class="form-control border-0 shadow-none fs-5" id="quickSearchInput" placeholder="Search customers, leads, opportunities..." autofocus />
+                    </div>
+                    <button type="button" class="btn-close me-1" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-3" id="quickSearchResults" style="max-height: 400px; overflow-y: auto;">
+                    <div class="text-center text-muted py-4 small">
+                        Type at least 2 characters to search across customers, leads, and opportunities.
+                    </div>
+                </div>
+                <div class="modal-footer bg-body-tertiary p-2 d-flex justify-content-between small text-muted">
+                    <span>Use <strong>Esc</strong> to close</span>
+                    <span>Role-scoped search</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/site.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

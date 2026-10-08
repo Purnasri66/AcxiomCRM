@@ -1,0 +1,86 @@
+@{
+    ViewData["Title"] = "Reports & Analytics";
+}
+
+<div class="mb-4">
+    <h1 class="h3 fw-bold mb-1">Reports &amp; Analytics</h1>
+    <p class="text-muted small mb-0">Exportable operational and management intelligence</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4 d-flex flex-column">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="badge bg-primary-subtle text-primary-emphasis p-3 rounded-circle"><i class="bi bi-people fs-4"></i></span>
+                    <div>
+                        <h5 class="fw-bold mb-0">Customer Report</h5>
+                        <small class="text-muted">Account directory and status</small>
+                    </div>
+                </div>
+                <p class="text-muted small mb-4">Complete breakdown of active and inactive accounts by geography and date created.</p>
+                <div class="mt-auto d-flex gap-2">
+                    <a asp-action="Customers" class="btn btn-outline-primary btn-sm flex-grow-1">View Online</a>
+                    <a asp-action="Customers" asp-route-format="csv" class="btn btn-primary btn-sm"><i class="bi bi-download me-1"></i> CSV</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4 d-flex flex-column">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="badge bg-warning-subtle text-warning-emphasis p-3 rounded-circle"><i class="bi bi-funnel fs-4"></i></span>
+                    <div>
+                        <h5 class="fw-bold mb-0">Lead Generation Report</h5>
+                        <small class="text-muted">Sources and conversions</small>
+                    </div>
+                </div>
+                <p class="text-muted small mb-4">Analysis of lead velocity, lead scoring, priority and status transition outcomes.</p>
+                <div class="mt-auto d-flex gap-2">
+                    <a asp-action="Leads" class="btn btn-outline-warning btn-sm flex-grow-1">View Online</a>
+                    <a asp-action="Leads" asp-route-format="csv" class="btn btn-warning btn-sm"><i class="bi bi-download me-1"></i> CSV</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4 d-flex flex-column">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="badge bg-success-subtle text-success-emphasis p-3 rounded-circle"><i class="bi bi-currency-rupee fs-4"></i></span>
+                    <div>
+                        <h5 class="fw-bold mb-0">Pipeline Forecast</h5>
+                        <small class="text-muted">Weighted stage breakdown</small>
+                    </div>
+                </div>
+                <p class="text-muted small mb-4">Stage-wise summary of active open deals, expected close amounts, and probability-weighted pipeline.</p>
+                <div class="mt-auto d-flex gap-2">
+                    <a asp-action="Pipeline" class="btn btn-outline-success btn-sm flex-grow-1">View Online</a>
+                    <a asp-action="Pipeline" asp-route-format="csv" class="btn btn-success btn-sm"><i class="bi bi-download me-1"></i> CSV</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4 d-flex flex-column">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="badge bg-info-subtle text-info-emphasis p-3 rounded-circle"><i class="bi bi-calendar-check fs-4"></i></span>
+                    <div>
+                        <h5 class="fw-bold mb-0">Follow-Up Compliance</h5>
+                        <small class="text-muted">Planned vs completed</small>
+                    </div>
+                </div>
+                <p class="text-muted small mb-4">Review agent engagement timeliness, overdue follow-ups, and completion ratios.</p>
+                <div class="mt-auto d-flex gap-2">
+                    <a asp-action="FollowUps" class="btn btn-outline-info btn-sm flex-grow-1">View Online</a>
+                    <a asp-action="FollowUps" asp-route-format="csv" class="btn btn-info btn-sm"><i class="bi bi-download me-1"></i> CSV</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

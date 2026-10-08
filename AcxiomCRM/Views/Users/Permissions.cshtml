@@ -1,0 +1,40 @@
+@model AcxiomCRM.Models.ViewModels.PermissionsMatrixViewModel
+@{
+    ViewData["Title"] = "Permissions Matrix";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h3 fw-bold mb-0">Permissions Matrix</h1>
+        <p class="text-muted small mb-0">Role-based access control and scope boundaries</p>
+    </div>
+    <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Back to Users</a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Module / Resource</th>
+                        <th><span class="badge bg-danger">Admin</span></th>
+                        <th><span class="badge bg-primary">Manager</span></th>
+                        <th><span class="badge bg-info text-dark">SalesExecutive</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Permissions)
+                    {
+                        <tr>
+                            <td class="fw-semibold ps-4">@row.Module</td>
+                            <td><span class="text-success"><i class="bi bi-check-circle-fill me-1"></i> @row.AdminAccess</span></td>
+                            <td><span class="@(row.ManagerAccess == "No Access" ? "text-danger" : "text-primary")">@row.ManagerAccess</span></td>
+                            <td><span class="@(row.SalesExecutiveAccess == "No Access" ? "text-danger" : "text-secondary")">@row.SalesExecutiveAccess</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

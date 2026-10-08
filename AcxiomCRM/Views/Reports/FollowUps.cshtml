@@ -1,0 +1,41 @@
+@model IEnumerable<AcxiomCRM.Models.Entities.FollowUp>
+@{
+    ViewData["Title"] = "Follow-Up Report";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h3 fw-bold mb-0">Follow-Up Report</h1>
+        <p class="text-muted small mb-0">Engagement timeline</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="FollowUps" asp-route-format="csv" class="btn btn-sm btn-outline-success">
+            <i class="bi bi-download me-1"></i> Export to CSV
+        </a>
+        <a asp-action="Index" class="btn btn-sm btn-outline-secondary">Back to Reports</a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 small">
+                <thead class="table-light">
+                    <tr><th>Date</th><th>Type</th><th>Status</th><th>Remarks</th><th>Assigned To</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var f in Model)
+                    {
+                        <tr>
+                            <td>@f.FollowUpDate.ToString("yyyy-MM-dd")</td>
+                            <td>@f.FollowUpType</td>
+                            <td><span class="badge bg-@(f.Status == "Completed" ? "success" : "warning")">@f.Status</span></td>
+                            <td>@(f.Remarks ?? "-")</td>
+                            <td>@f.AssignedTo</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

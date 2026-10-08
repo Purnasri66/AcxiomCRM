@@ -1,0 +1,287 @@
+@model AcxiomCRM.Services.DashboardData
+@{
+    ViewData["Title"] = "Dashboard";
+    var role = ViewBag.UserRole as string ?? "SalesExecutive";
+    var activeFilter = ViewBag.ActiveFilter as string ?? "month";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h1 class="h3 fw-bold mb-1">CRM Dashboard</h1>
+        <p class="text-muted small mb-0">Overview of pipeline, conversions, and activities</p>
+    </div>
+
+    <!-- Date Filters -->
+    <div class="d-flex align-items-center gap-2">
+        <div class="btn-group btn-group-sm" role="group">
+            <a asp-action="Index" asp-route-filter="today" class="btn @(activeFilter == "today" ? "btn-primary" : "btn-outline-secondary")">Today</a>
+            <a asp-action="Index" asp-route-filter="week" class="btn @(activeFilter == "week" ? "btn-primary" : "btn-outline-secondary")">This Week</a>
+            <a asp-action="Index" asp-route-filter="month" class="btn @(activeFilter == "month" ? "btn-primary" : "btn-outline-secondary")">This Month</a>
+            <a asp-action="Index" asp-route-filter="all" class="btn @(activeFilter == "all" ? "btn-primary" : "btn-outline-secondary")">All Time</a>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Metric Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold text-uppercase">Total Customers</span>
+                    <span class="badge bg-primary-subtle text-primary-emphasis p-2 rounded-circle"><i class="bi bi-people fs-6"></i></span>
+                </div>
+                <h3 class="fw-bold mb-0">@Model.TotalCustomers</h3>
+                <small class="text-muted">Active client portfolio</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold text-uppercase">Total Leads</span>
+                    <span class="badge bg-warning-subtle text-warning-emphasis p-2 rounded-circle"><i class="bi bi-funnel fs-6"></i></span>
+                </div>
+                <h3 class="fw-bold mb-0">@Model.TotalLeads</h3>
+                <small class="text-muted"><strong class="text-warning">@Model.OpenLeads</strong> open inquiries</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold text-uppercase">Pipeline Value</span>
+                    <span class="badge bg-success-subtle text-success-emphasis p-2 rounded-circle"><i class="bi bi-currency-rupee fs-6"></i></span>
+                </div>
+                <h3 class="fw-bold mb-0">₹@Model.TotalPipelineValue.ToString("N0")</h3>
+                <small class="text-muted">Weighted: <strong>₹@Model.WeightedPipeline.ToString("N0")</strong></small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-xl-3">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold text-uppercase">Opportunities</span>
+                    <span class="badge bg-info-subtle text-info-emphasis p-2 rounded-circle"><i class="bi bi-briefcase fs-6"></i></span>
+                </div>
+                <h3 class="fw-bold mb-0">@Model.TotalOpportunities</h3>
+                <small class="text-muted"><strong class="text-success">@Model.WonOpportunities won</strong> • <strong class="text-danger">@Model.LostOpportunities lost</strong></small>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (role == "Admin")
+{
+    <!-- Admin Security Stats Banner -->
+    <div class="card border-0 shadow-sm rounded-3 mb-4 bg-primary text-white">
+        <div class="card-body p-4">
+            <h5 class="fw-bold mb-3 d-flex align-items-center"><i class="bi bi-shield-lock me-2"></i> Security & Administration Overview</h5>
+            <div class="row g-3 text-center">
+                <div class="col-6 col-md-2">
+                    <div class="fs-4 fw-bold">@Model.TotalUsers</div>
+                    <div class="small opacity-75">Total Users</div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="fs-4 fw-bold">@Model.ActiveUsers</div>
+                    <div class="small opacity-75">Active Users</div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="fs-4 fw-bold">@Model.InactiveUsers</div>
+                    <div class="small opacity-75">Inactive Users</div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="fs-4 fw-bold">@Model.LockedAccounts</div>
+                    <div class="small opacity-75">Locked Accounts</div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="fs-4 fw-bold">@Model.FailedLoginsLast7Days</div>
+                    <div class="small opacity-75">Failed Logins (7d)</div>
+                </div>
+                <div class="col-6 col-md-2">
+                    <div class="fs-4 fw-bold">@Model.RecentAuditEvents</div>
+                    <div class="small opacity-75">Audit Events (24h)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Charts Row -->
+<div class="row g-3 mb-4">
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-header bg-transparent border-0 pt-3 fw-semibold">Leads by Status</div>
+            <div class="card-body d-flex align-items-center justify-content-center" style="min-height: 260px;">
+                <canvas id="leadsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-header bg-transparent border-0 pt-3 fw-semibold">Opportunity Pipeline</div>
+            <div class="card-body d-flex align-items-center justify-content-center" style="min-height: 260px;">
+                <canvas id="pipelineChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-header bg-transparent border-0 pt-3 fw-semibold">Monthly Sales Trend</div>
+            <div class="card-body d-flex align-items-center justify-content-center" style="min-height: 260px;">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Widgets Row: Top Deals at Risk & Follow-ups -->
+<div class="row g-3">
+    <!-- Top Deals at Risk -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-header bg-transparent border-0 pt-3 d-flex justify-content-between align-items-center">
+                <span class="fw-semibold"><i class="bi bi-shield-exclamation text-danger me-1"></i> Top Deals at Risk (Deal Health &lt; 50)</span>
+                <a asp-controller="Opportunity" asp-action="Index" class="btn btn-sm btn-link text-decoration-none p-0">View all</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light small">
+                            <tr>
+                                <th>Opportunity</th>
+                                <th>Amount</th>
+                                <th>Stage</th>
+                                <th>Health Score</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.TopDealsAtRisk.Any())
+                            {
+                                @foreach (var deal in Model.TopDealsAtRisk)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold">
+                                            <a asp-controller="Opportunity" asp-action="Details" asp-route-id="@deal.OpportunityId" class="text-decoration-none">
+                                                @deal.OpportunityName
+                                            </a>
+                                        </td>
+                                        <td>₹@deal.Amount.ToString("N0")</td>
+                                        <td><span class="badge bg-secondary">@deal.Stage</span></td>
+                                        <td>
+                                            <span class="badge bg-@deal.HealthColor" title="Deal Health Score based on probability, expected close date, and overdue follow-ups">
+                                                @deal.HealthScore / 100 (@deal.HealthLabel)
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a asp-controller="Opportunity" asp-action="Details" asp-route-id="@deal.OpportunityId" class="btn btn-sm btn-outline-primary py-0">View</a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center py-4 text-muted small">No deals currently flagged as critical risk. Great job!</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Follow-up Summary -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-3 h-100">
+            <div class="card-header bg-transparent border-0 pt-3 fw-semibold">
+                <i class="bi bi-bell text-warning me-1"></i> Follow-up Status
+            </div>
+            <div class="card-body d-flex flex-column justify-content-center">
+                <div class="d-flex justify-content-between align-items-center p-3 rounded bg-danger-subtle text-danger-emphasis mb-3">
+                    <div>
+                        <div class="fw-bold fs-4">@Model.OverdueFollowUps</div>
+                        <div class="small">Overdue Follow-ups</div>
+                    </div>
+                    <i class="bi bi-clock-history fs-2"></i>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center p-3 rounded bg-info-subtle text-info-emphasis mb-3">
+                    <div>
+                        <div class="fw-bold fs-4">@Model.UpcomingFollowUps</div>
+                        <div class="small">Upcoming in next 7 days</div>
+                    </div>
+                    <i class="bi bi-calendar-event fs-2"></i>
+                </div>
+
+                <a asp-controller="FollowUps" asp-action="Index" class="btn btn-outline-primary btn-sm mt-auto">
+                    Manage Follow-ups <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/Dashboard/GetChartData')
+            .then(res => res.json())
+            .then(data => {
+                // Leads Chart
+                new Chart(document.getElementById('leadsChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(data.leadStatus),
+                        datasets: [{
+                            data: Object.values(data.leadStatus),
+                            backgroundColor: ['#0d6efd', '#0dcaf0', '#198754', '#dc3545', '#6c757d']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                // Pipeline Chart
+                new Chart(document.getElementById('pipelineChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(data.pipelineStage),
+                        datasets: [{
+                            label: 'Deals',
+                            data: Object.values(data.pipelineStage),
+                            backgroundColor: '#0d6efd'
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+
+                // Monthly Sales Chart
+                new Chart(document.getElementById('salesChart'), {
+                    type: 'line',
+                    data: {
+                        labels: Object.keys(data.monthlySales),
+                        datasets: [{
+                            label: 'Won Value (₹)',
+                            data: Object.values(data.monthlySales),
+                            borderColor: '#198754',
+                            backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            });
+    });
+</script>
+}
